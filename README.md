@@ -1,2 +1,2 @@
 # Site
-MyPageSite
+https://bv7v2.github.io/Site/
