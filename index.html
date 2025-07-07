@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редирект в VK Mini App</title>
+  <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+  <script>
+    // Проверяем, открыто ли приложение в VK
+    if (typeof vkBridge !== 'undefined') {
+      vkBridge.send('VKWebAppInit'); // Инициализация VK Mini App
+    }
+    // Редирект через 1 секунду (можно убрать задержку)
+    setTimeout(() => {
+      window.location.href = 'https://www.ya.ru';
+    }, 1000);
+  </script>
+</head>
+<body>
+  <h1 style="text-align: center; padding-top: 50px;">
+    Вы будете перенаправлены на Яндекс...
+  </h1>
+</body>
+</html>
