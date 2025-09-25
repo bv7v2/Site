@@ -15,13 +15,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         categories.forEach(cat => {
             const catData = data[cat.key];
-            // Проверяем, что объект существует и содержит массив photos
+            // Правильная проверка: есть ли объект и массив photos внутри
             if (!catData || !Array.isArray(catData.photos) || catData.photos.length === 0) {
-                return;
+                return; // пропускаем пустые категории
             }
 
-            const photos = catData.photos; // все фото
-            const previewPhotos = photos.slice(0, 6); // превью — до 6 шт
+            const photos = catData.photos;
+            const previewPhotos = photos.slice(0, 6); // максимум 6 фото в слайдере
 
             const section = document.createElement('section');
             section.className = 'portfolio-category';
@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="slider-dots"></div>
                 </div>
             `;
-
             main.appendChild(section);
 
             const slider = section.querySelector('.slider');
@@ -47,13 +46,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             let currentIndex = 0;
             const total = previewPhotos.length;
 
-            // Заполняем слайдер
+            // Заполняем слайдер изображениями
             slider.innerHTML = previewPhotos.map(p => `
                 <img src="${p.url}" alt="${p.alt}" loading="lazy">
             `).join('');
 
-            // Точки
-            dotsContainer.innerHTML = previewPhotos.map((_, i) => 
+            // Создаём точки пагинации
+            dotsContainer.innerHTML = previewPhotos.map((_, i) =>
                 `<button class="${i === 0 ? 'active' : ''}"></button>`
             ).join('');
 
@@ -66,6 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             };
 
+            // Навигация
             prevBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentIndex = (currentIndex - 1 + total) % total;
@@ -92,10 +92,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 updateSlider();
             }, 5000);
 
-            section.querySelector('.slider-container').addEventListener('mouseenter', () => {
-                clearInterval(autoSlide);
-            });
-            section.querySelector('.slider-container').addEventListener('mouseleave', () => {
+            const container = section.querySelector('.slider-container');
+            container.addEventListener('mouseenter', () => clearInterval(autoSlide));
+            container.addEventListener('mouseleave', () => {
                 clearInterval(autoSlide);
                 autoSlide = setInterval(() => {
                     currentIndex = (currentIndex + 1) % total;
@@ -103,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }, 5000);
             });
 
-            // Lightbox: скрытые ссылки
+            // Lightbox: создаём скрытые ссылки для всей категории
             const lightboxContainer = document.createElement('div');
             lightboxContainer.style.display = 'none';
             photos.forEach(photo => {
@@ -116,8 +115,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             document.body.appendChild(lightboxContainer);
 
-            // Клик по слайдеру → Lightbox
-            section.querySelector('.slider-container').addEventListener('click', () => {
+            // Клик по слайдеру → открываем Lightbox
+            container.addEventListener('click', () => {
                 const firstLink = document.querySelector(`a[data-lightbox="${cat.key}"]`);
                 if (firstLink) firstLink.click();
             });
@@ -125,6 +124,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error('Ошибка загрузки портфолио:', error);
-        main.innerHTML = '<p style="text-align:center;padding:40px;">Не удалось загрузить портфолио. Обновите страницу.</p>';
+        main.innerHTML = '<p style="text-align:center; padding:40px; color:#555;">Не удалось загрузить портфолио. Обновите страницу.</p>';
     }
 });
