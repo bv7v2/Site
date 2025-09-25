@@ -125,3 +125,14 @@ footer {
     .hero p { font-size: 1.2rem; }
     .gallery-grid { grid-template-columns: 1fr; }
 }
+
+/* Убираем обводку при клике (для аксессибельности можно оставить, но выглядит не всегда красиво) */
+.gallery-item {
+    outline: none;
+}
+
+/* Делаем ссылки-обёртки невидимыми как ссылки */
+.gallery-grid a {
+    text-decoration: none;
+    color: inherit;
+}
