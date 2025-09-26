@@ -19,8 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            const photos = catData.photos;
-            const previewPhotos = photos.slice(0, 6);
+            const photos = catData.photos; // все фото категории
 
             const section = document.createElement('section');
             section.className = 'portfolio-category';
@@ -32,21 +31,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <button class="prev-btn">‹</button>
                         <button class="next-btn">›</button>
                     </div>
-                    <div class="slider-dots"></div>
                 </div>
             `;
             main.appendChild(section);
 
             const slider = section.querySelector('.slider');
-            const dotsContainer = section.querySelector('.slider-dots');
             const prevBtn = section.querySelector('.prev-btn');
             const nextBtn = section.querySelector('.next-btn');
 
             let currentIndex = 0;
-            const total = previewPhotos.length;
+            const total = photos.length;
 
-            // Заполняем слайдер изображениями
-            slider.innerHTML = previewPhotos.map(p => `
+            // Заполняем слайдер ВСЕМИ фото (для плавной прокрутки)
+            slider.innerHTML = photos.map(p => `
                 <img src="${p.url}" 
                      alt="${p.alt}" 
                      loading="lazy" 
@@ -54,21 +51,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                      onerror="this.style.opacity='0.4'; this.title='Изображение недоступно'">
             `).join('');
 
-            // Точки пагинации для основного слайдера
-            dotsContainer.innerHTML = previewPhotos.map((_, i) =>
-                `<button class="${i === 0 ? 'active' : ''}"></button>`
-            ).join('');
-
-            const dots = dotsContainer.querySelectorAll('button');
-
             const updateSlider = () => {
                 slider.style.transform = `translateX(-${currentIndex * 100}%)`;
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === currentIndex);
-                });
             };
 
-            // Навигация в основном слайдере
+            // Навигация
             prevBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentIndex = (currentIndex - 1 + total) % total;
@@ -79,14 +66,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 e.stopPropagation();
                 currentIndex = (currentIndex + 1) % total;
                 updateSlider();
-            });
-
-            dots.forEach((dot, i) => {
-                dot.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    currentIndex = i;
-                    updateSlider();
-                });
             });
 
             // Автопрокрутка
@@ -105,20 +84,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }, 5000);
             });
 
-            // === ОТКРЫТИЕ МОДАЛЬНОГО СЛАЙДЕРА ПРИ КЛИКЕ ===
-            container.addEventListener('click', (e) => {
-                // Определяем, на какой слайд кликнули
-                const rect = slider.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const slideWidth = rect.width / previewPhotos.length;
-                let previewIndex = Math.floor(clickX / slideWidth);
-                previewIndex = Math.max(0, Math.min(previewIndex, previewPhotos.length - 1));
-
-                // Находим реальный индекс в полном массиве
-                const clickedUrl = previewPhotos[previewIndex].url;
-                const fullIndex = photos.findIndex(p => p.url === clickedUrl);
-
-                openModalSlider(photos, fullIndex);
+            // === ОТКРЫТИЕ МОДАЛЬНОГО СЛАЙДЕРА ===
+            container.addEventListener('click', () => {
+                // Открываем с текущего фото
+                openModalSlider(photos, currentIndex);
             });
         });
 
