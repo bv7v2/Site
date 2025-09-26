@@ -15,13 +15,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         categories.forEach(cat => {
             const catData = data[cat.key];
-            // Правильная проверка: есть ли объект и массив photos внутри
             if (!catData || !Array.isArray(catData.photos) || catData.photos.length === 0) {
-                return; // пропускаем пустые категории
+                return;
             }
 
             const photos = catData.photos;
-            const previewPhotos = photos.slice(0, 6); // максимум 6 фото в слайдере
+            const previewPhotos = photos.slice(0, 6);
 
             const section = document.createElement('section');
             section.className = 'portfolio-category';
@@ -48,7 +47,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Заполняем слайдер изображениями
             slider.innerHTML = previewPhotos.map(p => `
-                <img src="${p.url}" alt="${p.alt}" loading="lazy">
+                <img src="${p.url}" 
+                     alt="${p.alt}" 
+                     loading="lazy" 
+                     decoding="async" 
+                     fetchpriority="low"
+                     onerror="this.style.opacity='0.3'; this.title='Изображение недоступно'">
             `).join('');
 
             // Создаём точки пагинации
@@ -102,23 +106,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }, 5000);
             });
 
-            // Lightbox: создаём скрытые ссылки для всей категории
-            const lightboxContainer = document.createElement('div');
-            lightboxContainer.style.display = 'none';
+            // === Lightbox: добавляем ВСЕ фото категории в DOM (скрытые ссылки) ===
             photos.forEach(photo => {
                 const link = document.createElement('a');
                 link.href = photo.url;
                 link.setAttribute('data-lightbox', cat.key);
                 link.setAttribute('data-title', photo.alt);
-                link.innerHTML = `<img src="${photo.url}" alt="${photo.alt}">`;
-                lightboxContainer.appendChild(link);
+                link.style.display = 'none';
+                document.body.appendChild(link); // добавляем в body — чище
             });
-            document.body.appendChild(lightboxContainer);
 
-            // Клик по слайдеру → открываем Lightbox
+            // Клик по слайдеру → открываем Lightbox с первой фото категории
             container.addEventListener('click', () => {
                 const firstLink = document.querySelector(`a[data-lightbox="${cat.key}"]`);
-                if (firstLink) firstLink.click();
+                if (firstLink) {
+                    firstLink.click();
+                }
             });
         });
 
