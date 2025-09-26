@@ -17,9 +17,6 @@
     <!-- Favicon -->
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 
-    <!-- Lightbox2 CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -33,7 +30,6 @@
     </header>
 
     <main>
-        <!-- Контейнер для динамических галерей -->
         <section class="portfolios"></section>
 
         <section class="contact-footer" aria-labelledby="contact-heading">
@@ -48,8 +44,12 @@
         <p>&copy; 2025 Витале Якимо. Все права защищены.</p>
     </footer>
 
-    <!-- Lightbox2 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+    <!-- Модальное окно галереи -->
+    <div id="gallery-modal" class="modal">
+        <button id="close-modal" class="modal-close">&times;</button>
+        <div id="modal-content" class="modal-content"></div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
