@@ -47,7 +47,24 @@ body {
 
 .hero p {
     font-size: 1.4rem;
+    margin-bottom: 20px;
     text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+}
+
+.hero-portfolio-link {
+    display: inline-block;
+    padding: 10px 24px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.hero-portfolio-link:hover {
+    background: white;
+    transform: translateY(-2px);
 }
 
 /* ОСНОВНОЕ ТЕЛО */
@@ -55,68 +72,71 @@ body {
     padding: 60px 20px;
     max-width: 1400px;
     margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px; /* равномерный отступ между категориями */
+    justify-content: center;
 }
 
 .portfolio-category {
-    margin-bottom: 80px;
+    flex: 1 1 calc(33.333% - 26px); /* 3 колонки с gap */
+    min-width: 300px; /* для адаптивности */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .portfolio-category h2 {
     text-align: center;
-    font-size: 2rem;
-    margin-bottom: 30px;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
     color: #222;
+    width: 100%;
 }
 
+/* Слайдер — один слайд */
 .slider-container {
-    position: relative;
-    max-width: 1000px;
-    margin: 0 auto;
+    width: 100%;
+    background: #fafafa; /* фон совпадает с body */
+    border-radius: 0;
+    box-shadow: none;
     overflow: hidden;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    cursor: pointer;
+    position: relative;
 }
 
 .slider {
+    width: 100%;
     display: flex;
     transition: transform 0.5s ease-in-out;
 }
 
 .slider img {
-    height: 400px;
-    width: auto;
-    min-width: 100%;
-    object-fit: cover;
-    object-position: center;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    background: #fafafa;
 }
 
-.slider img:hover {
-    transform: scale(1.02);
-}
-
-/* СТРЕЛКИ ОСНОВНОГО СЛАЙДЕРА */
+/* Стрелки основного слайдера (можно оставить или убрать — по желанию) */
 .slider-nav {
     position: absolute;
     top: 50%;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 15px;
     transform: translateY(-50%);
     pointer-events: none;
 }
 
 .slider-nav button {
-    background: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.7);
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -127,29 +147,6 @@ body {
 
 .slider-nav button:hover {
     background: white;
-}
-
-/* ТОЧКИ ПАГИНАЦИИ */
-.slider-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 20px;
-}
-
-.slider-dots button {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid #ccc;
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.slider-dots button.active {
-    background: #333;
-    border-color: #333;
 }
 
 /* ПОДВАЛ */
@@ -179,7 +176,7 @@ body {
     text-decoration: underline;
 }
 
-/* === МОДАЛЬНЫЙ СЛАЙДЕР (без точек) === */
+/* === МОДАЛЬНЫЙ СЛАЙДЕР === */
 .modal {
     display: none;
     position: fixed;
@@ -213,7 +210,7 @@ body {
     max-width: 100%;
     max-height: 90vh;
     object-fit: contain;
-    border-radius: 4px;
+    border-radius: 0;
 }
 
 .modal-prev,
@@ -263,25 +260,24 @@ body {
 }
 
 /* АДАПТИВНОСТЬ */
-@media (max-width: 768px) {
-    .hero h1 { font-size: 2.2rem; }
-    .hero p { font-size: 1.2rem; }
-    .slider img { height: 300px; }
-    .portfolios { padding: 40px 15px; }
-    .slider-nav button { width: 32px; height: 32px; font-size: 14px; }
-    
-    .modal-prev, .modal-next {
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
-    }
-    .modal-close {
-        top: 10px;
-        right: 15px;
-        font-size: 32px;
+@media (max-width: 1024px) {
+    .portfolio-category {
+        flex: 1 1 calc(50% - 20px); /* 2 колонки на планшетах */
     }
 }
 
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2.2rem; }
+    .hero p { font-size: 1.2rem; }
+    .hero-portfolio-link { padding: 8px 20px; font-size: 1rem; }
+    .portfolios { padding: 40px 15px; gap: 30px; }
+    .portfolio-category {
+        flex: 1 1 100%; /* одна колонка на мобильных */
+    }
+    .slider img { width: 100%; }
+}
+
 @media (max-width: 480px) {
-    .slider img { height: 250px; }
+    .hero h1 { font-size: 1.8rem; }
+    .hero p { font-size: 1rem; }
 }
