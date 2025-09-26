@@ -83,12 +83,19 @@ body {
 }
 
 .slider img {
-    min-width: 100%;
-    height: 400px;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
     object-fit: cover;
+    object-position: center;
     cursor: pointer;
+    border-radius: 8px; /* опционально — для красоты */
+    transition: transform 0.3s ease;
 }
 
+.slider img:hover {
+    transform: scale(1.02);
+}
 /* СТРЕЛКИ */
 .slider-nav {
     position: absolute;
@@ -177,4 +184,5 @@ body {
     .slider img { height: 300px; }
     .portfolios { padding: 40px 15px; }
     .slider-nav button { width: 32px; height: 32px; font-size: 14px; }
+
 }
