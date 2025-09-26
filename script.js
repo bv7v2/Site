@@ -50,12 +50,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <img src="${p.url}" 
                      alt="${p.alt}" 
                      loading="lazy" 
-                     decoding="async" 
-                     fetchpriority="low"
-                     onerror="this.style.opacity='0.3'; this.title='Изображение недоступно'">
+                     decoding="async"
+                     onerror="this.style.opacity='0.4'; this.title='Изображение недоступно'">
             `).join('');
 
-            // Создаём точки пагинации
+            // Точки пагинации
             dotsContainer.innerHTML = previewPhotos.map((_, i) =>
                 `<button class="${i === 0 ? 'active' : ''}"></button>`
             ).join('');
@@ -106,22 +105,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }, 5000);
             });
 
-            // === Lightbox: добавляем ВСЕ фото категории в DOM (скрытые ссылки) ===
-            photos.forEach(photo => {
-                const link = document.createElement('a');
-                link.href = photo.url;
-                link.setAttribute('data-lightbox', cat.key);
-                link.setAttribute('data-title', photo.alt);
-                link.style.display = 'none';
-                document.body.appendChild(link); // добавляем в body — чище
-            });
-
-            // Клик по слайдеру → открываем Lightbox с первой фото категории
+            // === ОТКРЫТИЕ ГАЛЕРЕИ В МОДАЛЬНОМ ОКНЕ ===
             container.addEventListener('click', () => {
-                const firstLink = document.querySelector(`a[data-lightbox="${cat.key}"]`);
-                if (firstLink) {
-                    firstLink.click();
-                }
+                const modal = document.getElementById('gallery-modal');
+                const content = document.getElementById('modal-content');
+                content.innerHTML = '';
+
+                photos.forEach(photo => {
+                    const img = document.createElement('img');
+                    img.src = photo.url;
+                    img.alt = photo.alt;
+                    img.loading = 'lazy';
+                    img.decoding = 'async';
+                    img.onerror = () => {
+                        img.style.opacity = '0.4';
+                        img.title = 'Изображение недоступно';
+                    };
+                    content.appendChild(img);
+                });
+
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
             });
         });
 
@@ -129,4 +133,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Ошибка загрузки портфолио:', error);
         main.innerHTML = '<p style="text-align:center; padding:40px; color:#555;">Не удалось загрузить портфолио. Обновите страницу.</p>';
     }
+
+    // Закрытие модального окна
+    const closeModal = document.getElementById('close-modal');
+    const modal = document.getElementById('gallery-modal');
+
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    });
+
+    // Закрытие по клику вне контента (опционально)
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
 });
