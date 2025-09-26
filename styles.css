@@ -79,7 +79,7 @@ body {
 }
 
 .portfolio-category {
-    flex: 1 1 calc(33.333% - 26px); /* 3 колонки */
+    flex: 1 1 calc(33.333% - 26px); /* 3 колонки с gap */
     min-width: 300px;
     display: flex;
     flex-direction: column;
@@ -99,29 +99,26 @@ body {
     width: 100%;
     background: #fafafa; /* фон совпадает с body */
     overflow: hidden;
-    border-radius: 0;
-    box-shadow: none;
     position: relative;
 }
 
 .slider {
     width: 100%;
-    height: 400px; /* фиксированная высота как у горизонтальных фото */
+    height: 400px; /* единая высота как у горизонтальных фото */
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .slider img {
-    max-height: 100%;
     max-width: 100%;
+    max-height: 100%;
     height: auto;
     width: auto;
     object-fit: contain; /* вписываем целиком, без обрезки */
-    background: #fafafa;
 }
 
-/* Стрелки основного слайдера (можно оставить или убрать — по желанию) */
+/* Стрелки навигации (опционально, можно убрать) */
 .slider-nav {
     position: absolute;
     top: 50%;
@@ -270,8 +267,12 @@ body {
 }
 
 @media (max-width: 768px) {
+    .hero h1 { font-size: 2.2rem; }
+    .hero p { font-size: 1.2rem; }
+    .hero-portfolio-link { padding: 8px 20px; font-size: 1rem; }
+    .portfolios { padding: 40px 15px; gap: 30px; }
     .portfolio-category {
-        flex: 1 1 100%;
+        flex: 1 1 100%; /* одна колонка на мобильных */
     }
     .slider {
         height: 300px; /* чуть меньше на мобильных */
@@ -281,6 +282,7 @@ body {
 @media (max-width: 480px) {
     .hero h1 { font-size: 1.8rem; }
     .hero p { font-size: 1rem; }
+    .slider {
+        height: 250px;
+    }
 }
-
-
