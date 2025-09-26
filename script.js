@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                      onerror="this.style.opacity='0.4'; this.title='Изображение недоступно'">
             `).join('');
 
-            // Точки пагинации
+            // Точки пагинации для основного слайдера
             dotsContainer.innerHTML = previewPhotos.map((_, i) =>
                 `<button class="${i === 0 ? 'active' : ''}"></button>`
             ).join('');
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             };
 
-            // Навигация
+            // Навигация в основном слайдере
             prevBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentIndex = (currentIndex - 1 + total) % total;
@@ -105,27 +105,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }, 5000);
             });
 
-            // === ОТКРЫТИЕ ГАЛЕРЕИ В МОДАЛЬНОМ ОКНЕ ===
-            container.addEventListener('click', () => {
-                const modal = document.getElementById('gallery-modal');
-                const content = document.getElementById('modal-content');
-                content.innerHTML = '';
+            // === ОТКРЫТИЕ МОДАЛЬНОГО СЛАЙДЕРА ПРИ КЛИКЕ ===
+            container.addEventListener('click', (e) => {
+                // Определяем, на какой слайд кликнули
+                const rect = slider.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const slideWidth = rect.width / previewPhotos.length;
+                let previewIndex = Math.floor(clickX / slideWidth);
+                previewIndex = Math.max(0, Math.min(previewIndex, previewPhotos.length - 1));
 
-                photos.forEach(photo => {
-                    const img = document.createElement('img');
-                    img.src = photo.url;
-                    img.alt = photo.alt;
-                    img.loading = 'lazy';
-                    img.decoding = 'async';
-                    img.onerror = () => {
-                        img.style.opacity = '0.4';
-                        img.title = 'Изображение недоступно';
-                    };
-                    content.appendChild(img);
-                });
+                // Находим реальный индекс в полном массиве
+                const clickedUrl = previewPhotos[previewIndex].url;
+                const fullIndex = photos.findIndex(p => p.url === clickedUrl);
 
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
+                openModalSlider(photos, fullIndex);
             });
         });
 
@@ -134,20 +127,61 @@ document.addEventListener('DOMContentLoaded', async () => {
         main.innerHTML = '<p style="text-align:center; padding:40px; color:#555;">Не удалось загрузить портфолио. Обновите страницу.</p>';
     }
 
-    // Закрытие модального окна
-    const closeModal = document.getElementById('close-modal');
-    const modal = document.getElementById('gallery-modal');
+    // === ФУНКЦИЯ МОДАЛЬНОГО СЛАЙДЕРА ===
+    function openModalSlider(photoList, startIndex) {
+        const modal = document.getElementById('gallery-modal');
+        const imgEl = document.getElementById('modal-img');
+        const prevBtn = modal.querySelector('.modal-prev');
+        const nextBtn = modal.querySelector('.modal-next');
+        const closeBtn = document.getElementById('close-modal');
 
-    closeModal.addEventListener('click', () => {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-    });
+        let currentIndex = startIndex;
+        const total = photoList.length;
 
-    // Закрытие по клику вне контента (опционально)
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
+        const updateImage = () => {
+            imgEl.src = photoList[currentIndex].url;
+            imgEl.alt = photoList[currentIndex].alt;
+        };
+
+        updateImage();
+
+        const closeModal = () => {
             modal.style.display = 'none';
             document.body.style.overflow = '';
-        }
-    });
+            document.removeEventListener('keydown', handleKey);
+        };
+
+        const handleKey = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            } else if (e.key === 'ArrowLeft') {
+                currentIndex = (currentIndex - 1 + total) % total;
+                updateImage();
+            } else if (e.key === 'ArrowRight') {
+                currentIndex = (currentIndex + 1) % total;
+                updateImage();
+            }
+        };
+
+        prevBtn.onclick = (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex - 1 + total) % total;
+            updateImage();
+        };
+
+        nextBtn.onclick = (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex + 1) % total;
+            updateImage();
+        };
+
+        closeBtn.onclick = closeModal;
+        modal.onclick = (e) => {
+            if (e.target === modal) closeModal();
+        };
+
+        document.addEventListener('keydown', handleKey);
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
 });
