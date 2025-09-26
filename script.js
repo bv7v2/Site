@@ -19,14 +19,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            const photos = catData.photos; // все фото категории
+            const photos = catData.photos;
+            let currentIndex = 0;
+            const total = photos.length;
 
             const section = document.createElement('section');
             section.className = 'portfolio-category';
             section.innerHTML = `
                 <h2>${cat.title}</h2>
                 <div class="slider-container" data-category="${cat.key}">
-                    <div class="slider"></div>
+                    <div class="slider">
+                        <img src="${photos[0].url}" 
+                             alt="${photos[0].alt}" 
+                             loading="lazy" 
+                             decoding="async">
+                    </div>
                     <div class="slider-nav">
                         <button class="prev-btn">‹</button>
                         <button class="next-btn">›</button>
@@ -35,58 +42,49 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
             main.appendChild(section);
 
-            const slider = section.querySelector('.slider');
+            const sliderImg = section.querySelector('.slider img');
             const prevBtn = section.querySelector('.prev-btn');
             const nextBtn = section.querySelector('.next-btn');
+            const container = section.querySelector('.slider-container');
 
-            let currentIndex = 0;
-            const total = photos.length;
-
-            // Заполняем слайдер ВСЕМИ фото (для плавной прокрутки)
-            slider.innerHTML = photos.map(p => `
-                <img src="${p.url}" 
-                     alt="${p.alt}" 
-                     loading="lazy" 
-                     decoding="async"
-                     onerror="this.style.opacity='0.4'; this.title='Изображение недоступно'">
-            `).join('');
-
-            const updateSlider = () => {
-                slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+            // Обновление изображения без пересоздания DOM
+            const updateImage = () => {
+                sliderImg.src = photos[currentIndex].url;
+                sliderImg.alt = photos[currentIndex].alt;
+                sliderImg.style.opacity = '';
+                sliderImg.onerror = () => sliderImg.style.opacity = '0.4';
             };
 
             // Навигация
             prevBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentIndex = (currentIndex - 1 + total) % total;
-                updateSlider();
+                updateImage();
             });
 
             nextBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentIndex = (currentIndex + 1) % total;
-                updateSlider();
+                updateImage();
             });
 
             // Автопрокрутка
             let autoSlide = setInterval(() => {
                 currentIndex = (currentIndex + 1) % total;
-                updateSlider();
+                updateImage();
             }, 5000);
 
-            const container = section.querySelector('.slider-container');
             container.addEventListener('mouseenter', () => clearInterval(autoSlide));
             container.addEventListener('mouseleave', () => {
                 clearInterval(autoSlide);
                 autoSlide = setInterval(() => {
                     currentIndex = (currentIndex + 1) % total;
-                    updateSlider();
+                    updateImage();
                 }, 5000);
             });
 
-            // === ОТКРЫТИЕ МОДАЛЬНОГО СЛАЙДЕРА ===
+            // Открытие модального окна со всеми фото
             container.addEventListener('click', () => {
-                // Открываем с текущего фото
                 openModalSlider(photos, currentIndex);
             });
         });
@@ -96,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         main.innerHTML = '<p style="text-align:center; padding:40px; color:#555;">Не удалось загрузить портфолио. Обновите страницу.</p>';
     }
 
-    // === ФУНКЦИЯ МОДАЛЬНОГО СЛАЙДЕРА ===
+    // === МОДАЛЬНЫЙ СЛАЙДЕР (загружает все фото при открытии) ===
     function openModalSlider(photoList, startIndex) {
         const modal = document.getElementById('gallery-modal');
         const imgEl = document.getElementById('modal-img');
