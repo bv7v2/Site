@@ -67,20 +67,20 @@ body {
     transform: translateY(-2px);
 }
 
-/* ОСНОВНОЕ ТЕЛО */
+/* ОСНОВНОЕ ТЕЛО — СЕТКА КАТЕГОРИЙ */
 .portfolios {
     padding: 60px 20px;
     max-width: 1400px;
     margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 40px;
-    justify-content: center;
+    justify-items: center;
 }
 
 .portfolio-category {
-    flex: 1 1 calc(33.333% - 26px); /* 3 колонки с gap */
-    min-width: 300px;
+    width: 100%;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -94,17 +94,17 @@ body {
     width: 100%;
 }
 
-/* Слайдер — фиксированная высота, вписывание без обрезки */
+/* СЛАЙДЕР — фиксированная высота, без обрезки */
 .slider-container {
     width: 100%;
-    background: #fafafa; /* фон совпадает с body */
+    background: #fafafa;
     overflow: hidden;
     position: relative;
 }
 
 .slider {
     width: 100%;
-    height: 400px; /* единая высота как у горизонтальных фото */
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -115,10 +115,10 @@ body {
     max-height: 100%;
     height: auto;
     width: auto;
-    object-fit: contain; /* вписываем целиком, без обрезки */
+    object-fit: contain;
 }
 
-/* Стрелки навигации (опционально, можно убрать) */
+/* СТРЕЛКИ НАВИГАЦИИ (опционально) */
 .slider-nav {
     position: absolute;
     top: 50%;
@@ -176,7 +176,7 @@ body {
     text-decoration: underline;
 }
 
-/* === МОДАЛЬНЫЙ СЛАЙДЕР === */
+/* === МОДАЛЬНОЕ ОКНО === */
 .modal {
     display: none;
     position: fixed;
@@ -210,7 +210,6 @@ body {
     max-width: 100%;
     max-height: 90vh;
     object-fit: contain;
-    border-radius: 0;
 }
 
 .modal-prev,
@@ -261,28 +260,26 @@ body {
 
 /* АДАПТИВНОСТЬ */
 @media (max-width: 1024px) {
-    .portfolio-category {
-        flex: 1 1 calc(50% - 20px); /* 2 колонки на планшетах */
+    .portfolios {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
     }
 }
 
 @media (max-width: 768px) {
+    .portfolios {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 40px 15px;
+    }
     .hero h1 { font-size: 2.2rem; }
     .hero p { font-size: 1.2rem; }
     .hero-portfolio-link { padding: 8px 20px; font-size: 1rem; }
-    .portfolios { padding: 40px 15px; gap: 30px; }
-    .portfolio-category {
-        flex: 1 1 100%; /* одна колонка на мобильных */
-    }
-    .slider {
-        height: 300px; /* чуть меньше на мобильных */
-    }
+    .slider { height: 300px; }
 }
 
 @media (max-width: 480px) {
     .hero h1 { font-size: 1.8rem; }
     .hero p { font-size: 1rem; }
-    .slider {
-        height: 250px;
-    }
+    .slider { height: 250px; }
 }
